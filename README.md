@@ -1,2 +1,2 @@
-# terraform-vault
+# Terraform Vault
 Terraform deployment of Vault
