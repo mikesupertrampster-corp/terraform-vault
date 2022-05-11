@@ -20,7 +20,9 @@ module "vault" {
 }
 
 module "monitoring" {
-  source      = "../../../modules/monitoring"
-  addr        = module.vault.addr
-  environment = var.environment
+  source       = "../../../modules/monitoring"
+  addr         = "${module.vault.addr}/v1/sys/health?standbyok=true&uninitcode=200&sealedcode=200"
+  environment  = var.environment
+  service_name = "vault"
+  service_team = "Platform Engineer"
 }

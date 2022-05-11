@@ -3,23 +3,30 @@ terraform {
     datadog = {
       source = "DataDog/datadog"
     }
+    pagerduty = {
+      source = "PagerDuty/pagerduty"
+    }
   }
 }
 
 data "aws_region" "current" {}
 
+locals {
+  name = "${title(var.service_name)} [${var.environment}]"
+}
+
 resource "datadog_synthetics_test" "vault" {
-  name      = "Vault [${var.environment}]"
+  name      = local.name
   tags      = ["service:vault", "env:${var.environment}"]
   status    = "live"
   type      = "api"
   subtype   = "http"
   locations = ["aws:${data.aws_region.current.name}"]
-  #  message   = "Notify @pagerduty"
+  message   = "@pagerduty-${title(var.service_name)}${var.environment}"
 
   request_definition {
     method = "GET"
-    url    = "${var.addr}/v1/sys/health?standbyok=true&uninitcode=200&sealedcode=200"
+    url    = var.addr
   }
 
   assertion {
@@ -42,7 +49,8 @@ resource "datadog_synthetics_test" "vault" {
   }
 
   options_list {
-    tick_every = 60 * 60
+    tick_every       = 60 * 60
+    monitor_priority = 3
 
     monitor_options {
       renotify_interval = 0

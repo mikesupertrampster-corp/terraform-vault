@@ -14,10 +14,6 @@ variable "environment" {
   type = string
 }
 
-variable "keypair" {
-  type = string
-}
-
 variable "region" {
   type = string
 }
