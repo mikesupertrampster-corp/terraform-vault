@@ -18,3 +18,9 @@ module "vault" {
   cluster_arn = data.aws_ecs_cluster.ecs.arn
   subnet_ids  = [for k, v in data.aws_subnet.subnet : v.id]
 }
+
+module "monitoring" {
+  source      = "../../../modules/monitoring"
+  addr        = module.vault.addr
+  environment = var.environment
+}
